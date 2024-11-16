@@ -1,5 +1,6 @@
 server:
   port: 8080
+  address: 127.0.0.1
 
 spring:
   application:
@@ -12,7 +13,8 @@ spring:
   sql:
     init:
       schema-locations: classpath:/sql/schema.sql
-#      data-locations: classpath:/sql/data.sql
+      data-locations: classpath:/sql/data.sql
+      mode: always
   h2:
     console:
       enabled: true
