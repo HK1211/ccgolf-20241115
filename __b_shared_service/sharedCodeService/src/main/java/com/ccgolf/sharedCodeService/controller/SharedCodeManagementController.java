@@ -1,8 +1,10 @@
 package com.ccgolf.sharedCodeService.controller;
 
+import com.ccgolf.sharedCodeService.constants.DefaultConsts;
 import com.ccgolf.sharedCodeService.dto.ApiResponse;
 import com.ccgolf.sharedCodeService.entity.SharedCodeManagement;
-import com.ccgolf.sharedCodeService.service.SharedCodeManagementService;
+import com.ccgolf.sharedCodeService.service.ISharedCodeManagementService;
+import com.ccgolf.sharedCodeService.util.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,35 +16,40 @@ import java.util.List;
 public class SharedCodeManagementController {
 
     @Autowired
-    private SharedCodeManagementService service;
+    private ISharedCodeManagementService service;
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<SharedCodeManagement>>> getAllCodes() {
         List<SharedCodeManagement> list = service.getAllCodes();
-        return ResponseEntity.ok(new ApiResponse<>(list, "200", "Success"));
+        String message = MessageUtil.formatSuccessMessage("조회");
+        return ResponseEntity.ok(ApiResponse.ok(list, message));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<SharedCodeManagement>> getCodeById(@PathVariable Long id) {
         SharedCodeManagement code = service.getCodeById(id);
-        return ResponseEntity.ok(new ApiResponse<>(code, "200", "Success"));
+        String message = MessageUtil.formatSuccessMessage("조회");
+        return ResponseEntity.ok(ApiResponse.ok(code, message));
     }
 
     @PostMapping
     public ResponseEntity<ApiResponse<SharedCodeManagement>> createCode(@RequestBody SharedCodeManagement code) {
         SharedCodeManagement createdCode = service.createCode(code);
-        return ResponseEntity.ok(new ApiResponse<>(createdCode, "201", "Created"));
+        String message = MessageUtil.formatSuccessMessage("등록");
+        return ResponseEntity.ok(ApiResponse.ok(createdCode, DefaultConsts.STATUS_201, message));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<SharedCodeManagement>> updateCode(@PathVariable Long id, @RequestBody SharedCodeManagement code) {
         SharedCodeManagement updatedCode = service.updateCode(id, code);
-        return ResponseEntity.ok(new ApiResponse<>(updatedCode, "200", "Updated"));
+        String message = MessageUtil.formatSuccessMessage("수정");
+        return ResponseEntity.ok(ApiResponse.ok(updatedCode, message));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteCode(@PathVariable Long id) {
         service.deleteCode(id);
-        return ResponseEntity.ok(new ApiResponse<>(null, "204", "Deleted"));
+        String message = MessageUtil.formatSuccessMessage("삭제");
+        return ResponseEntity.ok(ApiResponse.ok(null, message));
     }
 }

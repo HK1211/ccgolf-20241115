@@ -1,12 +1,12 @@
 package com.ccgolf.sharedCodeService.service.impl;
 
 import com.ccgolf.sharedCodeService.entity.SharedCodeDetailAttributeManagement;
+import com.ccgolf.sharedCodeService.exception.EntityNotFoundException;
 import com.ccgolf.sharedCodeService.repository.SharedCodeDetailAttributeManagementRepository;
 import com.ccgolf.sharedCodeService.service.ISharedCodeDetailAttributeManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 
 /**
@@ -74,14 +74,43 @@ public class SharedCodeDetailAttributeManagementServiceImpl implements ISharedCo
      */
     @Override
     public SharedCodeDetailAttributeManagement updateAttribute(Long id, SharedCodeDetailAttributeManagement attribute) {
+        // 1. 주어진 ID에 해당하는 엔티티를 조회
         SharedCodeDetailAttributeManagement existingAttribute = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("ID " + id + "에 해당하는 속성을 찾을 수 없습니다."));
 
-        // 기존 엔티티의 필드를 업데이트합니다.
-        existingAttribute.setName(attribute.getName());
-        existingAttribute.setValue(attribute.getValue());
-        // 필요에 따라 다른 필드도 업데이트할 수 있습니다.
+        // 2. 속성 값을 업데이트 (필요한 필드만 수정)
+        if (attribute.getCodeType() != null) {
+            existingAttribute.setCodeType(attribute.getCodeType());
+        }
+        if (attribute.getCode() != null) {
+            existingAttribute.setCode(attribute.getCode());
+        }
+        if (attribute.getAttributeCode() != null) {
+            existingAttribute.setAttributeCode(attribute.getAttributeCode());
+        }
+        if (attribute.getAttributeName() != null) {
+            existingAttribute.setAttributeName(attribute.getAttributeName());
+        }
+        if (attribute.getAttributeDescription() != null) {
+            existingAttribute.setAttributeDescription(attribute.getAttributeDescription());
+        }
 
+        // 3. startDate와 endDate가 유효하면 업데이트 (예시: 특정 날짜 범위 체크)
+        if (attribute.getStartDate() != null && attribute.getEndDate() != null) {
+            // 날짜가 올바른 범위인지 체크하는 비즈니스 로직 예시
+            if (attribute.getEndDate().isBefore(attribute.getStartDate())) {
+                throw new IllegalArgumentException("End date cannot be before start date.");
+            }
+            existingAttribute.setStartDate(attribute.getStartDate());
+            existingAttribute.setEndDate(attribute.getEndDate());
+        }
+
+        // 4. isActive가 null이 아니면 업데이트
+        if (attribute.getIsActive() != null) {
+            existingAttribute.setIsActive(attribute.getIsActive());
+        }
+
+        // 5. 수정된 데이터를 저장
         return repository.save(existingAttribute);
     }
 

@@ -12,14 +12,14 @@ spring:
   sql:
     init:
       schema-locations: classpath:/sql/schema.sql
-      data-locations: classpath:/sql/data.sql
+#      data-locations: classpath:/sql/data.sql
   h2:
     console:
       enabled: true
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: true
   devtools:
     restart:
